@@ -4,6 +4,7 @@ module.exports = (app) => {
 	const passport = require('passport')
 	const usersController = require('./../Controller/UsersController')
 	const AuthController = require('./../Controller/AuthController')
+	const ProfileController = require('./../Controller/ProfileController')
 
 	app
 	.route('/auth/signup')
@@ -14,8 +15,8 @@ module.exports = (app) => {
 	.post(AuthController.signIn)
 	
 	app
-	.route('/users/update')
-	.post(passport.authenticate('jwt', { session: false }), usersController.updateUser)
+	.route('/profile/update')
+	.post(passport.authenticate('jwt', { session: false }), ProfileController.updateUser)
 	
 	app
 	.route('/users/find')

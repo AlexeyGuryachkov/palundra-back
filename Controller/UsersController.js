@@ -48,23 +48,6 @@ exports.addUser = (req, res) => {
 	})
 }
 
-
-exports.updateUser = (req, res) => {
-	const id = req.query.id
-	const sql = `UPDATE users SET ? WHERE id = ${id}`
-	const updateData = req.body
-
-	db.query(sql, [updateData, id], (error, results) => {
-
-		if (error) {
-			responce.status(400, error, res)
-		} else {
-			responce.status(200, results, res)
-		}
-
-	})
-}
-
 exports.findUser = (req, res) => {
 	const id = req.query.id
 	db.query(`SELECT * FROM users WHERE id = ${id}`, (error, results) => {
