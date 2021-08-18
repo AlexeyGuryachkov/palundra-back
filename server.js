@@ -1,28 +1,25 @@
 const express = require("express")
+const multer = require('multer')
 const passport = require('passport')
 
 const app = express()
 const port = 3500
 
+const storage = multer.diskStorage({
+	destination: function (req, file, callback) {
+    callback(null, '/IT/backend/palundra-back/files/images')
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.originalname + '-' + Date.now() + '.png')
+  }
+})
 
-// app.use(function(req, res, next) {
-// 	res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-// 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-// 	next();
-// });
+exports.upload = multer({ storage: storage }).single('image')
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, PATCH, DELETE, OPTIONS"
-//   );
-//   next();
-// })
+// To upload multiple image 
+//var upload = multer({ storage: storage }).array('images', maxCount);
+// req.files is array of `images` files
+// maxCount files could be uploaded 
 
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Credentials", true);
@@ -30,7 +27,6 @@ app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
 	next();
 });
-
 
 //делаем наш парсинг в формате json
 app.use(express.json())

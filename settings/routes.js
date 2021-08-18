@@ -29,4 +29,8 @@ module.exports = (app) => {
 	app
 		.route('/auth/me')
 		.get(passport.authenticate('jwt', { session: false }), AuthController.authMe)
+
+	app
+	.route('/profile/updateAvatar')
+	.post(passport.authenticate('jwt', { session: false }), ProfileController.saveImage)
 }
