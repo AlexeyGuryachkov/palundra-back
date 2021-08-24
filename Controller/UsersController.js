@@ -16,14 +16,15 @@ exports.getAllUsers = (req, res) => {
 		if(error) {
 			responce.status(400, error, res)
 		} else {
-			responce.status(200, results, res)
+			responce.status(200, {usersList: results}, res)
 		}
 	})
 }
 
 exports.addUser = (req, res) => {
 	const sql = `INSERT INTO users SET ?`
-	res.set('Access-Control-Allow-Origin', '*')
+
+	// res.set('Access-Control-Allow-Origin', '*')
 
 	const post = {
 		name: req.body.name ? req.body.name : null,
@@ -43,6 +44,9 @@ exports.addUser = (req, res) => {
 			responce.status(false, errors.defaultError(error), res)
 		} else {
 			responce.status(true, {newUser: results[0]}, res)
+
+
+			// const frendsSql = `CREATE TABLE ${results[0].id}friends (name VARCHAR(255), address VARCHAR(255))`
 		}
 
 	})

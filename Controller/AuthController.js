@@ -13,7 +13,6 @@ const UsersController = require('./UsersController')
 
 exports.signUp = (req, res) => {
 	const sql = 'SELECT * FROM users WHERE `email` = ?'
-	// res.set('Access-Control-Allow-Origin', '*')
 
 	const email = req.body.email
 
@@ -32,7 +31,6 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req, res) => {
 	const sql = 'SELECT * FROM users WHERE `email` = ?'
-	// res.set('Access-Control-Allow-Origin', '*')
 
 	const email = req.body.email
 
@@ -67,9 +65,9 @@ exports.authMe = (req, res) => {
 	const tokenPayload = jwt_decode(myToken)
 	const myId = tokenPayload.userId
 
-	// res.set('Access-Control-Allow-Origin', '*')
-
-	db.query(`SELECT * FROM users WHERE id = ${myId}`, (error, results) => {
+	const sql = `SELECT id, name, surname, email, image, login, birthdate, status, phone FROM users WHERE id = ${myId}`
+	
+	db.query(sql, (error, results) => {
 
 		if(error) {
 			responce.status(false, errors.defaultError(error), res)

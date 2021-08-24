@@ -5,6 +5,7 @@ module.exports = (app) => {
 	const usersController = require('./../Controller/UsersController')
 	const AuthController = require('./../Controller/AuthController')
 	const ProfileController = require('./../Controller/ProfileController')
+	const FriendsController = require('./../Controller/FriendsController')
 
 	app
 	.route('/auth/signup')
@@ -31,6 +32,14 @@ module.exports = (app) => {
 		.get(passport.authenticate('jwt', { session: false }), AuthController.authMe)
 
 	app
-	.route('/profile/updateAvatar')
-	.post(passport.authenticate('jwt', { session: false }), ProfileController.saveImage)
+		.route('/profile/updateAvatar')
+		.post(passport.authenticate('jwt', { session: false }), ProfileController.saveImage)
+
+	app
+		.route('/friends/getFriends')
+		.get(passport.authenticate('jwt', { session: false }), FriendsController.getFriends)
+	app
+
+		.route('/friends/add')
+		.post(passport.authenticate('jwt', { session: false }), FriendsController.requestToAddToFriends)
 }
