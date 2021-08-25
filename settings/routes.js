@@ -35,11 +35,24 @@ module.exports = (app) => {
 		.route('/profile/updateAvatar')
 		.post(passport.authenticate('jwt', { session: false }), ProfileController.saveImage)
 
+		app
+			.route('/friends/add')
+			.post(passport.authenticate('jwt', { session: false }), FriendsController.requestToAddToFriends)
+
 	app
 		.route('/friends/getFriends')
 		.get(passport.authenticate('jwt', { session: false }), FriendsController.getFriends)
+
+	app
+		.route('/friends/getRequestsOut')
+		.get(passport.authenticate('jwt', { session: false }), FriendsController.getFriendsRequestsOut)
+
+	app
+		.route('/friends/getRequestsIn')
+		.get(passport.authenticate('jwt', { session: false }), FriendsController.getFriendsRequestsIn)
 	app
 
-		.route('/friends/add')
-		.post(passport.authenticate('jwt', { session: false }), FriendsController.requestToAddToFriends)
+		.route('/friends/approveRequest')
+		.post(passport.authenticate('jwt', { session: false }), FriendsController.approveRequestToFriends)
+		
 }

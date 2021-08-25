@@ -44,9 +44,6 @@ exports.addUser = (req, res) => {
 			responce.status(false, errors.defaultError(error), res)
 		} else {
 			responce.status(true, {newUser: results[0]}, res)
-
-
-			// const frendsSql = `CREATE TABLE ${results[0].id}friends (name VARCHAR(255), address VARCHAR(255))`
 		}
 
 	})
@@ -64,4 +61,3 @@ exports.findUser = (req, res) => {
 
 	})
 }
-

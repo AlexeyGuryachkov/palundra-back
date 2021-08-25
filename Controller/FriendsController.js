@@ -11,36 +11,92 @@ const errors = require('../settings/errors')
 		const tokenPayload = jwt_decode(myToken)
 		const myId = tokenPayload.userId
 	
-		const sql = `SELECT friends FROM users WHERE id = ${myId}`
+		const sql = `SELECT users.id, users.name, users.surname, users.image FROM friends JOIN users ON users.id=friends.fromId WHERE friends.fromId=${myId} AND friends.status=1 or friends.toId=${myId} AND friends.status=1`
 		
 		db.query(sql, (error, results) => {
 			
 			if(error) {
 				responce.status(false, errors.defaultError(error), res)
 			} else {
-				const friends = 'null' ? [] : [...results[0].friends]
-
-				responce.status(true, {friends}, res)
+				// const friends = 'null' ? [] : [...results[0].friends]
+				responce.status(true, {friends: results}, res)
 			}
 		})
 	}
 
-	exports.requestToAddToFriends = (req, res) => {
-		const myToken = req.headers.authorization
-		const tokenPayload = jwt_decode(myToken)
-		const myId = tokenPayload.userId
+exports.requestToAddToFriends = (req, res) => {
+	const myToken = req.headers.authorization
+	const tokenPayload = jwt_decode(myToken)
 
-		const responseJson = JSON.stringify(req.body)
-	
-		const sql = `UPDATE users SET requestsToFriendsIn = ? WHERE id = ?`
+	const myId = tokenPayload.userId
+	const toId = req.body.toId
 
-		db.query(sql, [responseJson, myId], (error, results) => {
-	
-			if (error) {
-				responce.status(false, errors.defaultError(error), res)
-			} else {
-				responce.status(true, results, res)
-			}
-	
-		})
+	const post = {
+		fromId: myId, toId, status: 2
 	}
+
+	const sql = 'INSERT INTO friends SET ?'
+
+	db.query(sql, post, (error, results) => {
+		if (error) {
+			responce.status(false, errors.defaultError(error), res)
+		} else {
+			const requestToFriends = {
+				mess: 'Заявка в друзья отправлена',
+			}
+			responce.status(true, requestToFriends, res)
+		}
+	})
+}
+
+exports.getFriendsRequestsOut = (req, res) => {
+	const myToken = req.headers.authorization
+	const tokenPayload = jwt_decode(myToken)
+
+	const myId = tokenPayload.userId
+
+	const sql = `SELECT users.id, users.name, users.surname, users.image FROM friends JOIN users ON users.id=friends.toId WHERE friends.fromId=${myId} AND friends.status=2`
+
+	db.query(sql, (error, results) => {
+		if (error) {
+			responce.status(false, errors.defaultError(error), res)
+		} else {
+			responce.status(true, {friendsRequestsOut: results}, res)
+		}
+	})
+}
+
+exports.getFriendsRequestsIn = (req, res) => {
+	const myToken = req.headers.authorization
+	const tokenPayload = jwt_decode(myToken)
+
+	const myId = tokenPayload.userId
+	
+	const sql = `SELECT users.id, friends.id AS requestId, users.name, users.surname, users.image FROM friends JOIN users ON users.id=friends.fromId WHERE friends.toId=${myId} AND friends.status=2`
+
+	db.query(sql, (error, results) => {
+		if (error) {
+			responce.status(false, errors.defaultError(error), res)
+		} else {
+			responce.status(true, {friendsRequestsIn: results}, res)
+		}
+	})
+}
+
+exports.approveRequestToFriends = (req, res) => {
+	const myToken = req.headers.authorization
+	const tokenPayload = jwt_decode(myToken)
+
+	const myId = tokenPayload.userId
+	const requestId = req.body.requestId
+
+	const sql = `UPDATE friends SET status=1 WHERE id = ${requestId} AND toId=${myId}`
+
+	db.query(sql, (error, results) => {
+		if (error) {
+			responce.status(false, errors.defaultError(error), res)
+		} else {
+			responce.status(true, {friendsRequestsIn: results}, res)
+		}
+	})
+}
