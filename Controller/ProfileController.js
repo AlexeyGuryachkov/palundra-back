@@ -32,7 +32,8 @@ exports.saveImage = (req, res) => {
 		const myToken = req.headers.authorization
 		const tokenPayload = jwt_decode(myToken)
 		const myId = tokenPayload.userId
-		const newImage =  res.req.file.path
+		
+		const newImage = res.req.file.path
 	
 		const sql = `UPDATE users SET ? WHERE id = ${myId}`
 

@@ -10,16 +10,29 @@ const errors = require('../settings/errors')
 		const myToken = req.headers.authorization
 		const tokenPayload = jwt_decode(myToken)
 		const myId = tokenPayload.userId
-	
-		const sql = `SELECT users.id, users.name, users.surname, users.image FROM friends JOIN users ON users.id=friends.fromId WHERE friends.fromId=${myId} AND friends.status=1 or friends.toId=${myId} AND friends.status=1`
+
+		/*друзья из входящих заявок*/
+		const sqlToId = `SELECT users.id, users.name, users.surname, users.image FROM friends JOIN users ON users.id=friends.fromId WHERE friends.toId=${myId} AND friends.status=1`
+		/*друзья из изходящих заявок*/
+		const sqlFromId = `SELECT users.id, users.name, users.surname, users.image FROM friends JOIN users ON users.id=friends.toId WHERE friends.fromId=${myId} AND friends.status=1`
 		
-		db.query(sql, (error, results) => {
+		db.query(sqlToId, (error, results) => {
 			
 			if(error) {
 				responce.status(false, errors.defaultError(error), res)
 			} else {
-				// const friends = 'null' ? [] : [...results[0].friends]
-				responce.status(true, {friends: results}, res)
+				const friendsToMyId = results
+
+				db.query(sqlFromId, (error_from, results_from) => {
+			
+					if(error_from) {
+						responce.status(false, errors.defaultError(error_from), res)
+					} else {
+						const friendsfromMyId = results_from
+						
+						responce.status(true, {friends: [...friendsToMyId, ...friendsfromMyId]}, res)
+					}
+				})
 			}
 		})
 	}

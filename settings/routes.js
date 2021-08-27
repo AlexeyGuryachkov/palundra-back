@@ -6,6 +6,7 @@ module.exports = (app) => {
 	const AuthController = require('./../Controller/AuthController')
 	const ProfileController = require('./../Controller/ProfileController')
 	const FriendsController = require('./../Controller/FriendsController')
+	const MessengerContoller = require('./../Controller/MessengerContoller')
 
 	app
 	.route('/auth/signup')
@@ -16,9 +17,19 @@ module.exports = (app) => {
 	.post(AuthController.signIn)
 	
 	app
+		.route('/auth/me')
+		.get(passport.authenticate('jwt', { session: false }), AuthController.authMe)
+
+	/*profile*/
+	app
 	.route('/profile/update')
 	.post(passport.authenticate('jwt', { session: false }), ProfileController.updateUser)
 	
+	app
+		.route('/profile/updateAvatar')
+		.post(passport.authenticate('jwt', { session: false }), ProfileController.saveImage)
+
+	/*users*/
 	app
 	.route('/users/find')
 	.get(passport.authenticate('jwt', { session: false }), usersController.findUser)
@@ -27,17 +38,10 @@ module.exports = (app) => {
 		.route('/users')
 		.get(passport.authenticate('jwt', { session: false }), usersController.getAllUsers)
 
+	/*friends*/
 	app
-		.route('/auth/me')
-		.get(passport.authenticate('jwt', { session: false }), AuthController.authMe)
-
-	app
-		.route('/profile/updateAvatar')
-		.post(passport.authenticate('jwt', { session: false }), ProfileController.saveImage)
-
-		app
-			.route('/friends/add')
-			.post(passport.authenticate('jwt', { session: false }), FriendsController.requestToAddToFriends)
+		.route('/friends/add')
+		.post(passport.authenticate('jwt', { session: false }), FriendsController.requestToAddToFriends)
 
 	app
 		.route('/friends/getFriends')
@@ -50,9 +54,21 @@ module.exports = (app) => {
 	app
 		.route('/friends/getRequestsIn')
 		.get(passport.authenticate('jwt', { session: false }), FriendsController.getFriendsRequestsIn)
-	app
 
+	app
 		.route('/friends/approveRequest')
 		.post(passport.authenticate('jwt', { session: false }), FriendsController.approveRequestToFriends)
 		
+	/*messenger*/
+	app
+		.route('/messenger/send')
+		.post(passport.authenticate('jwt', { session: false }), MessengerContoller.sendMessage)
+
+	app
+		.route('/dialog/get')
+		.get(passport.authenticate('jwt', { session: false }), MessengerContoller.getDialog)
+
+	app
+		.route('/messenger/getList')
+		.get(passport.authenticate('jwt', { session: false }), MessengerContoller.getDialogsList)
 }
