@@ -4,6 +4,8 @@ const responce = require('./../responce')
 const db = require('./../settings/db')
 const jwt_decode = require("jwt-decode")
 
+const wsMap = require('../server')
+
 const errors = require('../settings/errors')
 
 exports.sendMessage = (req, res) => {
@@ -27,6 +29,10 @@ exports.sendMessage = (req, res) => {
 			responce.status(true, 'ok', res)
 		}
 	})
+
+	const targetWs = wsMap.wsMap.get(req.body.toId)
+	targetWs.send(JSON.stringify({type: 'message', data: post}))
+	//нахожу в массиве ws по toId нужный ws. => ws.send()
 }
 
 exports.getDialog = (req, res) => {
