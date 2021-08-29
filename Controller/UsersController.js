@@ -51,12 +51,13 @@ exports.addUser = (req, res) => {
 
 exports.findUser = (req, res) => {
 	const id = req.query.id
-	db.query(`SELECT * FROM users WHERE id = ${id}`, (error, results) => {
+
+	db.query(`SELECT birthdate, email, id, image, login, name, surname, phone, status FROM users WHERE id = ${id}`, (error, results) => {
 
 		if(error) {
 			responce.status(400, error, res)
 		} else {
-			responce.status(200, results, res)
+			responce.status(200, {userById: results[0]}, res)
 		}
 
 	})

@@ -31,8 +31,7 @@ exports.sendMessage = (req, res) => {
 	})
 
 	const targetWs = wsMap.wsMap.get(req.body.toId)
-	targetWs.send(JSON.stringify({type: 'message', data: post}))
-	//нахожу в массиве ws по toId нужный ws. => ws.send()
+	targetWs?.send(JSON.stringify({type: 'message', data: post}))
 }
 
 exports.getDialog = (req, res) => {
